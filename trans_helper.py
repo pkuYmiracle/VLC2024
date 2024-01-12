@@ -167,5 +167,7 @@ class Client :
         all_bits += file_bits
         all_bits += generate_random_binary_string(self.random_len)
 
-        return padding_start + add_one_and_check(all_bits)
+        all_bits = padding_start + add_one_and_check(all_bits)
+        print("all bits len : {}".format(len(all_bits)))
+        return all_bits
 
