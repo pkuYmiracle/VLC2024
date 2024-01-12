@@ -116,10 +116,7 @@ class Server :
         print("file len : {}".format(file_len))
         all_bits = all_bits[user[1]:]
         file_bits = all_bits[:file_len]
-        file = transStrBits.binary_to_bytes(file_bits)
-        file = rsa_helper.decrypt(file, privateKey).encode('utf-8')
-        with open(file_name, 'w') as f:
-            f.write(file.decode('utf-8'))
+        transFileBits.trans_bits_to_file(file_bits, file_name)  
         print("Receive file successfully!")
 
 class Client :
@@ -159,16 +156,17 @@ class Client :
 
 
 
-        file_bits = rsa_helper.encrypt_file(file_name, self.publicKey)
-        file_bits = transStrBits.bytes_to_binary(file_bits) 
+        file_bits = transFileBits.trans_file_to_bits(file_name)  
         bits_len = len(file_bits)
         print("file len : {}".format(bits_len))
         all_bits += "{:032b}".format(bits_len)
         all_bits += generate_random_binary_string(self.random_len)
         all_bits += file_bits
         all_bits += generate_random_binary_string(self.random_len)
-
+ 
         all_bits = padding_start + add_one_and_check(all_bits)
         print("all bits len : {}".format(len(all_bits)))
+
+
         return all_bits
 

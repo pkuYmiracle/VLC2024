@@ -1,7 +1,7 @@
 import rsa
 
-def generate_keys(file_name):
-    (publicKey, privateKey) = rsa.newkeys(1024)
+def generate_keys(file_name, key_len = 1024):
+    (publicKey, privateKey) = rsa.newkeys(key_len)
     with open(file_name + '/publicKey.pem', 'wb') as p:
         p.write(publicKey.save_pkcs1('PEM'))
     with open(file_name + 'privateKey.pem', 'wb') as p:
