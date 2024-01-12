@@ -25,7 +25,7 @@ def decrypt(ciphertext, key):
 def encrypt_file(file_name, publicKey):
     with open(file_name, 'r') as file:
         content = file.read()
-    encrypted_content = encrypt(content.encode('utf-8'), publicKey)
+    encrypted_content = rsa.encrypt(content.encode('utf-8'), publicKey)
     return encrypted_content
 def main():
     generate_keys("keys/test/")

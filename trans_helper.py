@@ -16,7 +16,7 @@ def add_one_and_check(input_str : str) -> str:
     input_len = len(input_str)
     for i in range(len(input_str)):
         assert(input_str[i] == '0' or input_str[i] == '1')
-        if i % 14 == 0:
+        if i != 0 and i % 14 == 0:
             output_str += '1'
             if ones % 2 :
                 output_str += '1'
@@ -25,12 +25,13 @@ def add_one_and_check(input_str : str) -> str:
             ones = 0
         output_str += input_str[i]
         ones += input_str[i] == '1'
+        
     output_str += '1'
     if ones % 2 :
         output_str += '1'
     else :
         output_str += '0' 
-    output_len = len(output_str)
+    output_len = len(output_str) 
     assert(output_len * 14 == input_len * 16)
 
     return output_str
@@ -103,10 +104,11 @@ class Server :
             return
         password_len = int(all_bits[:32], 2)
         all_bits = all_bits[32:]
-        password = transStrBits.trans_bits_to_str(all_bits[:password_len])
+        password = transStrBits.binary_to_bytes(all_bits[:password_len])
         all_bits = all_bits[password_len:]
         print("password :{}, len : {}".format(password[:10], password_len))
-        if password != rsa_helper.decrypt(user_name, privateKey):
+        password = rsa_helper.decrypt(password, privateKey) 
+        if password != user_name:
             print("Wrong password!")
             return
         file_len = int(all_bits[:32], 2)
@@ -114,10 +116,10 @@ class Server :
         print("file len : {}".format(file_len))
         all_bits = all_bits[user[1]:]
         file_bits = all_bits[:file_len]
-        file = transStrBits.trans_bits_to_str(file_bits)
-        file = rsa_helper.decrypt(file, privateKey)
+        file = transStrBits.binary_to_bytes(file_bits)
+        file = rsa_helper.decrypt(file, privateKey).encode('utf-8')
         with open(file_name, 'w') as f:
-            f.write(file)
+            f.write(file.decode('utf-8'))
         print("Receive file successfully!")
 
 class Client :
@@ -127,7 +129,7 @@ class Client :
             self.publicKey = rsa.PublicKey.load_pkcs1(p.read()) 
         self.random_len = random_len
         self.user_name = user_name
-        self.password = rsa_helper.encrypt(self.user_name.encode('utf-8'), self.publicKey)
+        self.password = rsa_helper.encrypt(self.user_name, self.publicKey)
 
     def send_file(self, file_name : str):
         # transfer file to  
@@ -140,7 +142,7 @@ class Client :
         for i in range(PADDING_LEN):
             padding_start += "0" * (PADDING_LEN) + "{:08b}".format(i)
         
-        print("padding start :", padding_start)
+        print("padding start len: ", len(padding_start))
          
 
         bits = transStrBits.trans_str_to_bits(self.user_name)
@@ -148,9 +150,8 @@ class Client :
         print("user_name :{}, len : {}".format(self.user_name[:10], bits_len))
         all_bits += "{:032b}".format(bits_len)
         all_bits += bits
-
-        
-        bits = transStrBits.trans_str_to_bits(self.password)
+ 
+        bits = transStrBits.bytes_to_binary(self.password)
         bits_len = len(bits)
         print("password :{}, len : {}".format(self.password[:10], bits_len))
         all_bits += "{:032b}".format(bits_len)
@@ -159,7 +160,7 @@ class Client :
 
 
         file_bits = rsa_helper.encrypt_file(file_name, self.publicKey)
-        file_bits = transStrBits.trans_str_to_bits(file_bits) 
+        file_bits = transStrBits.bytes_to_binary(file_bits) 
         bits_len = len(file_bits)
         print("file len : {}".format(bits_len))
         all_bits += "{:032b}".format(bits_len)

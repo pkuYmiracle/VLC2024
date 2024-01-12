@@ -10,6 +10,17 @@ def trans_bits_to_str(input_bits : str) -> str:
     
     return char_str
 
+def bytes_to_binary(bytes_data):
+    binary_data = ''.join(format(byte, '08b') for byte in bytes_data)
+    return binary_data
+
+def binary_to_bytes(binary_data):
+    bytes_data = bytearray()
+    for i in range(0, len(binary_data), 8):
+        byte = int(binary_data[i:i+8], 2)
+        bytes_data.append(byte)
+    return bytes_data
+
 if __name__ == "__main__":
     test = trans_str_to_bits("--12 ads")
     print(test,len(test))
