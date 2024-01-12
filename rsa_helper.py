@@ -1,16 +1,16 @@
 import rsa
 
-def generate_keys():
+def generate_keys(file_name):
     (publicKey, privateKey) = rsa.newkeys(1024)
-    with open('keys/publicKey.pem', 'wb') as p:
+    with open(file_name + '/publicKey.pem', 'wb') as p:
         p.write(publicKey.save_pkcs1('PEM'))
-    with open('keys/privateKey.pem', 'wb') as p:
+    with open(file_name + 'privateKey.pem', 'wb') as p:
         p.write(privateKey.save_pkcs1('PEM'))
 
-def load_keys():
-    with open('keys/publicKey.pem', 'rb') as p:
+def load_keys(file_name):
+    with open(file_name + 'publicKey.pem', 'rb') as p:
         publicKey = rsa.PublicKey.load_pkcs1(p.read())
-    with open('keys/privateKey.pem', 'rb') as p:
+    with open(file_name + 'privateKey.pem', 'rb') as p:
         privateKey = rsa.PrivateKey.load_pkcs1(p.read())
     return publicKey, privateKey
 
@@ -21,11 +21,15 @@ def decrypt(ciphertext, key):
     try:
         return rsa.decrypt(ciphertext, key).decode('utf-8')
     except:
-        return False
-
+        return None
+def encrypt_file(file_name, publicKey):
+    with open(file_name, 'r') as file:
+        content = file.read()
+    encrypted_content = encrypt(content.encode('utf-8'), publicKey)
+    return encrypted_content
 def main():
-    generate_keys()
-    publicKey, privateKey = load_keys()
+    generate_keys("keys/test/")
+    publicKey, privateKey = load_keys("keys/test/")
 
     message = input('Enter a message:')
     ciphertext = encrypt(message, publicKey)
