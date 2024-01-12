@@ -39,7 +39,7 @@ def remove_one_and_check(input_str: str) -> (str, bool):
     output_str = ""
     ones = 0
     flag = True
-    #assert(len(input_str) % 16 == 0)
+    assert(len(input_str) % 16 == 0)
 
     for i in range(len(input_str)):
         assert(input_str[i] == '0' or input_str[i] == '1')
@@ -54,7 +54,7 @@ def remove_one_and_check(input_str: str) -> (str, bool):
             ones = 0
         else:
             ones += input_str[i] == '1'
-            output_str += input_str[i]
+            output_str += input_str[i] 
 
     return output_str, flag
 class Server :
@@ -67,7 +67,7 @@ class Server :
     def receive_file(self, file_name : str, all_bits : str):
         
         flag = False
-        for i in range(PADDING_LEN):
+        for i in range(PADDING_LEN - 1):
             padding_start = ""
             for j in range(i, PADDING_LEN):
                 padding_start += "0" * 24 + "{:08b}".format(j)
@@ -78,7 +78,16 @@ class Server :
                 break
         if flag == False:
             print("No padding start")
+            return 
+        padding_end = ""
+        for i in range(PADDING_LEN - 1, -1, -1):
+            padding_end += "0" * 24 + "{:08b}".format(i)
+        index = all_bits.find(padding_end)
+        if index == -1:
+            print("No padding end")
             return
+        all_bits = all_bits[:index]
+        
         all_bits,flag = remove_one_and_check(all_bits)
         if flag == False:
             print("Error in format!")
@@ -137,7 +146,7 @@ class Client :
         
         padding_start = ""
         for i in range(PADDING_LEN):
-            padding_start += "0" * (PADDING_LEN) + "{:08b}".format(i)
+            padding_start += "0" * 24 + "{:08b}".format(i)
         
         print("padding start len: ", len(padding_start))
          
@@ -164,9 +173,15 @@ class Client :
         all_bits += file_bits
         all_bits += generate_random_binary_string(self.random_len)
  
-        all_bits = padding_start + add_one_and_check(all_bits)
+
+        
+        padding_end = ""
+        for i in range(PADDING_LEN - 1, -1, -1):
+            padding_end += "0" * 24 + "{:08b}".format(i)
+
+
+        all_bits = padding_start + add_one_and_check(all_bits) + padding_end
         print("all bits len : {}".format(len(all_bits)))
 
-
-        return all_bits
+        return all_bits 
 
