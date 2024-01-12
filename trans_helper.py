@@ -70,7 +70,7 @@ class Server :
         for i in range(PADDING_LEN):
             padding_start = ""
             for j in range(i, PADDING_LEN):
-                padding_start += "0" * (PADDING_LEN) + "{:08b}".format(j)
+                padding_start += "0" * 24 + "{:08b}".format(j)
             find_index = all_bits.find(padding_start)
             if find_index != -1:
                 all_bits = all_bits[find_index + len(padding_start):]

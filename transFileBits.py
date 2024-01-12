@@ -1,14 +1,15 @@
 import transStrBits
 def trans_file_to_bits(file_name): 
-    with open(file_name, 'r', encoding='utf-8') as file:
+    with open(file_name, 'rb') as file:
         content = file.read()
-        
-    return transStrBits.trans_str_to_bits(content)
+    binary_data = ''.join(format(byte, '08b') for byte in content)
+    return binary_data
 
 def trans_bits_to_file(file_bits, new_file_name): 
-    file_str = transStrBits.trans_bits_to_str(file_bits)
-    with open(new_file_name, 'w', encoding='utf-8') as file:
-        file.write(file_str)
+    
+    file = transStrBits.binary_to_bytes(file_bits)
+    with open(new_file_name, 'w') as f:
+            f.write(file.decode('utf-8')) 
 
 def are_files_equal(file1, file2):
     with open(file1, 'rb') as f1, open(file2, 'rb') as f2:
