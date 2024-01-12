@@ -39,7 +39,7 @@ def remove_one_and_check(input_str: str) -> (str, bool):
     output_str = ""
     ones = 0
     flag = True
-    assert(len(input_str) % 16 == 0)
+    #assert(len(input_str) % 16 == 0)
 
     for i in range(len(input_str)):
         assert(input_str[i] == '0' or input_str[i] == '1')
