@@ -1,12 +1,12 @@
 # gen keys
 import rsa_helper
-rsa_helper.generate_keys("keys/Alice/")
+rsa_helper.generate_keys("keys/Bob/")
 import trans_helper
 import random
-client = trans_helper.Client("keys/Alice/",random_len=10,user_name="Alice", password="passwordAlice")
+client = trans_helper.Client("keys/Bob/",random_len=10,user_name="Bob", password="password")
 
 server = trans_helper.Server()
-server.add_user("keys/Alice/",10,"Alice", password="passwordAlice")
+server.add_user("keys/Bob/",10,"Bob", password="password")
 send_bits = client.send_file("test.txt")
 
 before_bits = send_bits
