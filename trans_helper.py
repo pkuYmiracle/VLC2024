@@ -61,8 +61,8 @@ class Server :
     def __init__(self):
         self.users = []
 
-    def add_user(self, key_file : str, random_len : int, user_name : str):
-        self.users.append((key_file, random_len, user_name))
+    def add_user(self, key_file : str, random_len : int, user_name : str, password : str):
+        self.users.append((key_file, random_len, user_name, password))
 
     def receive_file(self, file_name : str, all_bits : str):
         
@@ -117,7 +117,7 @@ class Server :
         all_bits = all_bits[password_len:]
         print("password :{}, len : {}".format(password[:10], password_len))
         password = rsa_helper.decrypt(password, privateKey) 
-        if password != user_name:
+        if password != user[3]:
             print("Wrong password!")
             return
         file_len = int(all_bits[:32], 2)
@@ -129,17 +129,17 @@ class Server :
         print("Receive file successfully!")
 
 class Client :
-    def __init__(self, key_file : str, random_len : int, user_name : str):
+    def __init__(self, key_file : str, random_len : int, user_name : str, password : str):
         
         with open(key_file + 'publicKey.pem', 'rb') as p:
             self.publicKey = rsa.PublicKey.load_pkcs1(p.read()) 
         self.random_len = random_len
         self.user_name = user_name
-        self.password = rsa_helper.encrypt(self.user_name, self.publicKey)
+        self.password = rsa_helper.encrypt(password, self.publicKey)
 
     def send_file(self, file_name : str):
         # transfer file to  
-        # padding start + user_name + encrypt(user_name)  + file_len + [ randombits(len = len(user_name)) + encrypt(file) + randombits(len = len(user_name))] + padding end
+        # padding start + user_name + encrypt(user_name)  + file_len + [ randombits(len = len(user_name)) + file + randombits(len = len(user_name))] + padding end
         # before transfer, both client and server know the len and keys
         
         all_bits = ""
