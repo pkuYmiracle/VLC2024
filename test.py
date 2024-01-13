@@ -2,12 +2,23 @@
 import rsa_helper
 rsa_helper.generate_keys("keys/Alice/")
 import trans_helper
-
+import random
 client = trans_helper.Client("keys/Alice/",random_len=10,user_name="Alice", password="passwordAlice")
 
 server = trans_helper.Server()
 server.add_user("keys/Alice/",10,"Alice", password="passwordAlice")
 send_bits = client.send_file("test.txt")
 
-send_bits += trans_helper.generate_random_binary_string(233) # 模拟padding后面的一些随机串
-server.receive_file("test2.txt",send_bits[1150:])
+before_bits = send_bits
+for i in range(0, len(send_bits), 16):
+    pos = random.randint(i,i + 15)
+    assert(i <= pos <= i + 15)
+    flag = random.randint(0,1) >= 1
+    if flag :
+        send_bits = send_bits[:pos] + '1' +  send_bits[pos + 1 : ]
+    else:
+        send_bits = send_bits[:pos] + '0' +  send_bits[pos + 1 : ]
+     
+assert(before_bits != send_bits)
+ 
+server.receive_file("test2.txt",send_bits)
