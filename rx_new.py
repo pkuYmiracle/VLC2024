@@ -5,20 +5,17 @@ from collections import deque
 # Configure the serial connections
 # You might need to change the COM port name and the baud rate
 
-ser = serial.Serial(
-    port='COM3',
-    baudrate=115200,
-    parity=serial.PARITY_NONE,
-    stopbits=serial.STOPBITS_ONE,
-    bytesize=serial.EIGHTBITS,
-    timeout=2  # Timeout for read operation, in seconds
-)
-print(type(ser))
-
-
 import pprint
-data_points = deque(maxlen=500)
 def get_signal():
+    ser = serial.Serial(
+        port='COM3',
+        baudrate=115200,
+        parity=serial.PARITY_NONE,
+        stopbits=serial.STOPBITS_ONE,
+        bytesize=serial.EIGHTBITS,
+        timeout=2  # Timeout for read operation, in seconds
+    )
+    data_points = []
     is_start=False
     head_padding=0
     len_head=0
@@ -80,10 +77,12 @@ def get_signal():
                         if total_len != -1 and len(converted_data) == total_len * 8:
                             return converted_data
                         
-                    if total_len != -1:
-                        print(total_len)
+                    # if total_len != -1:
+                    #     print(total_len)
                     # print(bit)
-                    print(converted_data)
+                    
+                    if len(converted_data) % 100 == 0 and len(converted_data) > 0:
+                        print(total_len,len(converted_data))
                     
                     lastbit = bit
 
@@ -100,11 +99,13 @@ def get_signal():
             ser.close()
             print("Serial connection closed")  
 
-data_0=get_signal()
-pprint.pprint(data_0)
 
-hex_str = hex(int(data_0, 2))[2:]
 
-print(hex_str)
+def get_data():
+    data_0=get_signal()
+    return data_0
 
-print(bytes.fromhex(hex_str).decode('utf-8'))
+if __name__ == "__main__":
+    data_0 = get_signal()
+    hex_str = hex(int(data_0, 2))[2:]
+    print(bytes.fromhex(hex_str).decode('utf-8'))
