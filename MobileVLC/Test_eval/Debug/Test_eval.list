@@ -774,8 +774,8 @@ int main(void)
  800075a:	2110      	movs	r1, #16
  800075c:	4837      	ldr	r0, [pc, #220]	; (800083c <main+0x134>)
  800075e:	f000 fd7f 	bl	8001260 <HAL_DAC_SetValue>
-		  		HAL_Delay(12);
- 8000762:	200c      	movs	r0, #12
+		  		HAL_Delay(2);
+ 8000762:	2002      	movs	r0, #2
  8000764:	f000 fbd6 	bl	8000f14 <HAL_Delay>
 		  	for(int i=0;i<32;++i)
  8000768:	68fb      	ldr	r3, [r7, #12]
@@ -796,8 +796,8 @@ int main(void)
  800077e:	2110      	movs	r1, #16
  8000780:	482e      	ldr	r0, [pc, #184]	; (800083c <main+0x134>)
  8000782:	f000 fd6d 	bl	8001260 <HAL_DAC_SetValue>
-		  		HAL_Delay(12);
- 8000786:	200c      	movs	r0, #12
+		  		HAL_Delay(2);
+ 8000786:	2002      	movs	r0, #2
  8000788:	f000 fbc4 	bl	8000f14 <HAL_Delay>
 		  	for(int i=0;i<16;++i)
  800078c:	68bb      	ldr	r3, [r7, #8]
@@ -842,8 +842,8 @@ int main(void)
  80007c8:	2110      	movs	r1, #16
  80007ca:	481c      	ldr	r0, [pc, #112]	; (800083c <main+0x134>)
  80007cc:	f000 fd48 	bl	8001260 <HAL_DAC_SetValue>
-	  				HAL_Delay(12);
- 80007d0:	200c      	movs	r0, #12
+	  				HAL_Delay(2);
+ 80007d0:	2002      	movs	r0, #2
  80007d2:	f000 fb9f 	bl	8000f14 <HAL_Delay>
 	  				HAL_DAC_SetValue(&hdac1,DAC_CHANNEL_2,DAC_ALIGN_12B_R,bit_val*4095);
  80007d6:	787a      	ldrb	r2, [r7, #1]
@@ -854,8 +854,8 @@ int main(void)
  80007e0:	2110      	movs	r1, #16
  80007e2:	4816      	ldr	r0, [pc, #88]	; (800083c <main+0x134>)
  80007e4:	f000 fd3c 	bl	8001260 <HAL_DAC_SetValue>
-	  				HAL_Delay(12);
- 80007e8:	200c      	movs	r0, #12
+	  				HAL_Delay(2);
+ 80007e8:	2002      	movs	r0, #2
  80007ea:	f000 fb93 	bl	8000f14 <HAL_Delay>
 	  			for(uint8_t j=0;j<8;++j)
  80007ee:	78fb      	ldrb	r3, [r7, #3]

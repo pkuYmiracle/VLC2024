@@ -25,7 +25,7 @@ for port in serial.tools.list_ports.comports():
 pprint.pprint (port_data)
 
 ser = serial.Serial(
-    port='COM3',
+    port='/dev/cu.usbserial-1120',
     baudrate=115200,
     parity=serial.PARITY_NONE,
     stopbits=serial.STOPBITS_ONE,

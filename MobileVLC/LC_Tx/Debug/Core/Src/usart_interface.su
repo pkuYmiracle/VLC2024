@@ -1,0 +1,3 @@
+../Core/Src/usart_interface.c:18:1:__io_putchar	16	static
+../Core/Src/usart_interface.c:29:6:usartSend	16	static
+../Core/Src/usart_interface.c:36:6:USART_IRQHandler_myself	16	static

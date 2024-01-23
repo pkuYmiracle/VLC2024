@@ -4,7 +4,7 @@ import time
 # You might need to change the COM port name and the baud rate
 
 ser = serial.Serial(
-    port='/dev/cu.usbserial-110',
+    port='/dev/cu.usbserial-1140',
     baudrate=115200,
     parity=serial.PARITY_NONE,
     stopbits=serial.STOPBITS_ONE,

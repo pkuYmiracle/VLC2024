@@ -131,12 +131,12 @@ int main(void)
 		  	for(int i=0;i<32;++i)
 		  	{
 		  		HAL_DAC_SetValue(&hdac1,DAC_CHANNEL_2,DAC_ALIGN_12B_R,4095);
-		  		HAL_Delay(12);
+		  		HAL_Delay(2);
 		  	}
 		  	for(int i=0;i<16;++i)
 		  	{
 		  		HAL_DAC_SetValue(&hdac1,DAC_CHANNEL_2,DAC_ALIGN_12B_R,0);
-		  		HAL_Delay(12);
+		  		HAL_Delay(2);
 		  	}
 	  		//printf("rx_len=%d\r\n",USART1_RX_LEN);//打印接收长度
 	  		//HAL_UART_Transmit(&huart1,USART1_RX_BUF, USART1_RX_LEN,200);//接收数据打印出来
@@ -150,9 +150,9 @@ int main(void)
 	  				//printf("%d\r\n",bit_val);
 	  				//HAL_GPIO_WritePin(GPIOB,GPIO_PIN_4,bit_val);
 	  				HAL_DAC_SetValue(&hdac1,DAC_CHANNEL_2,DAC_ALIGN_12B_R,2500);
-	  				HAL_Delay(12);
+	  				HAL_Delay(2);
 	  				HAL_DAC_SetValue(&hdac1,DAC_CHANNEL_2,DAC_ALIGN_12B_R,bit_val*4095);
-	  				HAL_Delay(12);
+	  				HAL_Delay(2);
 	  			}
 
 	  		}
