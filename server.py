@@ -1,19 +1,21 @@
-# gen keys
-import rsa_helper
-rsa_helper.generate_keys("keys/Alice/")
+# server 
+
 import trans_helper
-
-import rx
-
-server = trans_helper.Server()
-server.add_user("keys/Alice/",10,"Alice")
-
+import rx_new
 import time
 
-while True:
+server = trans_helper.Server()
+server.add_user("keys/Bob/",10,"Bob", password="password")
 
-    received_bits = rx.rx_receive()
+receive_bits = ''
 
-    server.receive_file("test2.txt",received_bits)
+try:
+    # while True:
+    receive_bits += str(rx_new.get_data())
     
-    time.sleep(5)
+    print(receive_bits)
+
+except KeyboardInterrupt:
+    pass
+finally:
+    server.receive_file("received.txt",receive_bits)

@@ -6,7 +6,7 @@ from collections import deque
 # You might need to change the COM port name and the baud rate
 
 ser = serial.Serial(
-    port='/dev/cu.usbserial-1120',
+    port='COM3',
     baudrate=115200,
     parity=serial.PARITY_NONE,
     stopbits=serial.STOPBITS_ONE,
@@ -14,31 +14,10 @@ ser = serial.Serial(
     timeout=2  # Timeout for read operation, in seconds
 )
 print(type(ser))
-import statistics
-def remove_outliers(nums:deque, threshold=2):
-    if len(nums)==1:
-        return nums
-    # 创建双端队列
-    num_deque = nums.copy()
-    
-    # 计算均值和标准差
-    mean_value = statistics.mean(num_deque)
-    std_dev = statistics.stdev(num_deque)
-    
-    # 定义异常值的阈值，通常为均值加减标准差的倍数
-    threshold_value = threshold * std_dev
-    
-    # 从队列两端去除偏离均值过多的异常数
-    while len(num_deque) > 0 and abs(num_deque[0] - mean_value) > threshold_value:
-        num_deque.popleft()
-    
-    while len(num_deque) > 0 and abs(num_deque[-1] - mean_value) > threshold_value:
-        num_deque.pop()
-    
-    return list(num_deque)
+
 
 import pprint
-data_points = deque(maxlen=400)
+data_points = deque(maxlen=500)
 def get_signal():
     is_start=False
     head_padding=0
@@ -87,31 +66,30 @@ def get_signal():
                         mid_low = (val_1 * 2 + val_0) / 3
                         mid_high = (val_1 + val_0 * 2) / 3
 
-                        if number <= mid_low:
-                            bit = '1'
-                        elif number <= mid_high:
-                            bit = '2'
-                        else:
-                            bit = '0'
-                                        
+                    if number <= mid_low:
+                        bit = '1'
+                    elif number <= mid_high:
+                        bit = '2'
+                    else:
+                        bit = '0'
+                                    
+                    
+                    if lastbit == '2' and bit != '2':
+                        converted_data += bit
                         
-                        if lastbit == '2' and bit != '2':
-                            converted_data += bit
-                            
-                            if len(converted_data) == 16 and total_len == -1:
-                                total_len = int(converted_data, 2)
-                                converted_data = ''
-                            
-                            if total_len != -1 and len(converted_data) == total_len * 8:
-                                return converted_data
-                            
-                        if total_len != -1:
-                            pass
-                            print(total_len)
-                        # print(bit)
-                        print(converted_data,val_0,val_1)
+                        if len(converted_data) == 16 and total_len == -1:
+                            total_len = int(converted_data, 2)
+                            converted_data = ''
                         
-                        lastbit = bit
+                        if total_len != -1 and len(converted_data) == total_len * 8:
+                            return converted_data
+                        
+                    if total_len != -1:
+                        print(total_len)
+                    # print(bit)
+                    print(converted_data)
+                    
+                    lastbit = bit
 
                     # print(number<mid_val-100,number,min_val,max_val,mid_val)    
                     # print(head_padding)
@@ -126,11 +104,13 @@ def get_signal():
             ser.close()
             print("Serial connection closed")  
 
-data_0=get_signal()
-pprint.pprint(data_0)
 
-hex_str = hex(int(data_0, 2))[2:]
 
-print(hex_str)
+def get_data():
+    data_0=get_signal()
+    return data_0
 
-print(bytes.fromhex(hex_str).decode('utf-8'))
+if __name__ == "__main__":
+    data_0 = get_signal()
+    hex_str = hex(int(data_0, 2))[2:]
+    print(bytes.fromhex(hex_str).decode('utf-8'))
