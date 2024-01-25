@@ -6,9 +6,164 @@ import random
 PADDING_LEN = 2 ** 8
 REAL_INFO = 10
 
-
 def generate_random_binary_string(length):
     return ''.join(random.choices(['0', '1'], k=length)) 
+class EDcoder_NRZ_L:
+    # encode and decode for NRZ_L
+    def __init__(self):
+        pass
+    def encode(self, input_str : str) -> str:
+        output_str = ""
+        for i in input_str:
+            if i == '0':
+                output_str += '0'
+            else:
+                output_str += '1'
+        return output_str
+    def decode(self, input_str : str) -> str:
+        output_str = ""
+        for i in input_str:
+            if i == '0':
+                output_str += '0'
+            else:
+                output_str += '1'
+        return output_str
+    def check(self, check_turn) :
+        for i in range(check_turn):
+            cur_str = generate_random_binary_string(100)
+            assert(self.decode(self.encode(cur_str)) == cur_str)    
+class EDcoder_NRZ_I:
+    # encode and decode for NRZ_I
+    def __init__(self):
+        self.cur_flag = False
+    def encode(self, input_str : str) -> str:
+        output_str = ""
+        last_str = "0"
+        for i in input_str:
+            if i == '1':
+                last_str = "1" if last_str == '0' else "0"
+            output_str += last_str
+        return output_str
+    def decode(self, input_str : str) -> str:
+        output_str = ""
+        last_str = "0"
+        for i in input_str:
+            if i != last_str:
+                output_str += '1'
+            else:
+                output_str += '0'
+            last_str = i
+        return output_str
+    def check(self, check_turn) :
+        for i in range(check_turn):
+            cur_str = generate_random_binary_string(100)
+            assert(self.decode(self.encode(cur_str)) == cur_str)    
+class EDcoder_Manchester:
+    # encode and decode for Manchester
+    def __init__(self):
+        pass
+    def encode(self, input_str : str) -> str:
+        output_str = ""
+        for i in input_str:
+            if i == '0':
+                output_str += '10'
+            else:
+                output_str += '01'
+        return output_str
+    def decode(self, input_str : str) -> str:
+        output_str = ""
+        for i in range(0, len(input_str), 2):
+            if input_str[i : i + 2] == '10':
+                output_str += '0'
+            else:
+                output_str += '1'
+        return output_str
+    def check(self, check_turn) :
+        for i in range(check_turn):
+            cur_str = generate_random_binary_string(100)
+            assert(self.decode(self.encode(cur_str)) == cur_str)    
+class EDcoder_4B5B:
+    # encode and decode for 4B/5B
+    def __init__(self) -> None:
+        self.encoding_table = {
+            '0000': '11110',
+            '0001': '01001',
+            '0010': '10100',
+            '0011': '10101',
+            '0100': '01010',
+            '0101': '01011',
+            '0110': '01110',
+            '0111': '01111',
+            '1000': '10010',
+            '1001': '10011',
+            '1010': '10110',
+            '1011': '10111',
+            '1100': '11010',
+            '1101': '11011',
+            '1110': '11100',
+            '1111': '11101'
+        } 
+        self.decoding_table = {v: k for k, v in self.encoding_table.items()}
+        self.code = EDcoder_NRZ_I()
+    def encode(self, input_str : str) -> str:
+        output_str = ""
+        assert(len(input_str) % 4 == 0)
+        for i in range(0, len(input_str), 4):
+            output_str += self.encoding_table[input_str[i : i + 4]]
+        return self.code.encode(output_str)
+    def decode(self, input_str : str) -> str:
+        input_str = self.code.decode(input_str)
+        output_str = ""
+        assert(len(input_str) % 5 == 0)
+        for i in range(0, len(input_str), 5):
+            output_str += self.decoding_table[input_str[i : i + 5]]
+        return output_str
+    def check(self, check_turn) :
+        for i in range(check_turn):
+            cur_str = generate_random_binary_string(100)
+            assert(self.decode(self.encode(cur_str)) == cur_str)    
+class EDcoder_Miller:
+    # encode and decode for Miller
+    def __init__(self):
+        pass
+    def encode(self, input_str : str) -> str:
+        output_str = ""
+        last_str = "01"
+        for i in input_str:
+            if i == '1':
+                cur_str = ""
+                if last_str[-1] == '1':
+                    cur_str = "10"
+                else:
+                    cur_str = "01"
+                output_str += cur_str
+                last_str = cur_str
+            else:
+                if last_str == "00":
+                    output_str += "11"
+                    last_str = "11"
+                elif last_str == "11":
+                    output_str += "00"
+                    last_str = "00"
+                elif last_str == "01":
+                    output_str += "11"
+                    last_str = "11"
+                else:
+                    output_str += "00"
+                    last_str = "00"
+        return output_str
+    def decode(self, input_str : str) -> str:
+        output_str = "" 
+        for i in range(0, len(input_str), 2):
+            if input_str[i : i + 2] == '01' or input_str[i : i + 2] == '10':
+                output_str += '1' 
+            else:
+                output_str += '0'
+        return output_str
+    def check(self, check_turn) :
+        for i in range(check_turn):
+            cur_str = generate_random_binary_string(100)
+            assert(self.decode(self.encode(cur_str)) == cur_str)    
 # assume 1/16 error
 # 10 / 16
 # 8     0 1 2 3 4 5 6 7 8 9 
@@ -103,8 +258,9 @@ def remove_one_and_check(input_str: str) -> (str, bool):
     assert(ret_flag == False or len(input_str) * REAL_INFO == len(output_str) * 16)
     return output_str,ret_flag
 class Server :
-    def __init__(self):
+    def __init__(self, edcoder):
         self.users = []
+        self.edcoder = edcoder
 
     def add_user(self, key_file : str, random_len : int, user_name : str, password : str):
         self.users.append((key_file, random_len, user_name, password))
@@ -133,6 +289,7 @@ class Server :
             return
         all_bits = all_bits[:index]
         '''
+        all_bits = self.edcoder.decode(all_bits)
         all_bits,flag = remove_one_and_check(all_bits)
         if flag == False:
             print("Error in format!")
@@ -174,13 +331,14 @@ class Server :
         print("Receive file successfully!")
 
 class Client :
-    def __init__(self, key_file : str, random_len : int, user_name : str, password : str):
+    def __init__(self, key_file : str, random_len : int, user_name : str, password : str, edcoder):
         
         with open(key_file + 'publicKey.pem', 'rb') as p:
             self.publicKey = rsa.PublicKey.load_pkcs1(p.read()) 
         self.random_len = random_len
         self.user_name = user_name
         self.password = rsa_helper.encrypt(password, self.publicKey)
+        self.edcoder = edcoder
 
     def send_file(self, file_name : str):
         # transfer file to  
@@ -227,6 +385,9 @@ class Client :
 
         #all_bits = padding_start + add_one_and_check(all_bits) + padding_end
         all_bits = add_one_and_check(all_bits)
+
+        all_bits = self.edcoder.encode(all_bits)
+
         print("all bits len : {}".format(len(all_bits)))
 
         return all_bits 
